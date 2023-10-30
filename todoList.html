@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>To-Do List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: rgb(5, 114, 114);
+    }
+
+    #todo-container {
+      width: 400px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    #todo-list {
+      list-style-type: none;
+      padding: 0;
+      background-color: rgb(55, 214, 188);
+    }
+    #todo-input{
+      width:230px;
+      height: 25px;
+        }
+    #todo-list li {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px;
+      border: 1px solid #050101;
+      margin-bottom: 5px;
+    }
+
+    #todo-list button {
+      background-color: #0013b9;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    #add-button{
+      width: 100px;
+      height: 30px;
+      background-color:rgb(6, 80, 55);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div id="todo-container">
+    <h1>To-Do List</h1>
+    <input type="text" id="todo-input" placeholder="Add a new task">
+    <button id="add-button">Add</button>
+    <ul id="todo-list"></ul>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const todoInput = document.getElementById('todo-input');
+      const addButton = document.getElementById('add-button');
+      const todoList = document.getElementById('todo-list');
+
+      // Load stored tasks from localStorage
+      const storedTasks = JSON.parse(localStorage.getItem('todoItems')) || [];
+
+      function updateList() {
+        todoList.innerHTML = '';
+        storedTasks.forEach((taskText, index) => {
+          const listItem = document.createElement('li');
+          listItem.innerHTML = `
+            ${taskText}
+            <button class="remove-button" data-index="${index}">Remove</button>
+          `;
+          todoList.appendChild(listItem);
+        });
+
+        const removeButtons = document.querySelectorAll('.remove-button');
+        removeButtons.forEach((button) => {
+          button.addEventListener('click', function () {
+            const index = this.getAttribute('data-index');
+            storedTasks.splice(index, 1);
+            localStorage.setItem('todoItems', JSON.stringify(storedTasks));
+            updateList();
+          });
+        });
+      }
+
+      updateList();
+
+      addButton.addEventListener('click', function () {
+        const taskText = todoInput.value;
+        if (taskText) {
+          storedTasks.push(taskText);
+          localStorage.setItem('todoItems', JSON.stringify(storedTasks));
+          todoInput.value = '';
+          updateList();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
